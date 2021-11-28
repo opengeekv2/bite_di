@@ -26,18 +26,9 @@ def create_container():
         def dec_inject(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
-                #to_inject = func
-                #if ismethod(func):
-                #    to_inject = func.__func__
                 argspec = getfullargspec(func).args
                 args = _replace_args_by_string(args, argspec, contents)
                 kwargs = _replace_kwargs(kwargs, contents)
-                #if isawaitable(func):
-                #    
-                #    async def tmp():
-                #        return (await func(*(arglist), **kwargs))
-                #    
-                #    return tmp()
                 
                 return func(*args, **kwargs)
             
