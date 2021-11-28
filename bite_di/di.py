@@ -1,4 +1,4 @@
-from inspect import getfullargspec, ismethod, isawaitable
+from inspect import getfullargspec
 from functools import wraps
 
 def _replace_args_by_string(args: tuple, argspec: list[str], contents: dict) -> tuple:
