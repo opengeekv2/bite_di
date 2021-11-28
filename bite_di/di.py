@@ -1,19 +1,27 @@
 from inspect import getfullargspec, ismethod, isawaitable
 from functools import wraps
 
-def _replace_args(args: tuple, argspec: list[str], contents: dict) -> tuple:
+def _replace_args_by_string(args: tuple, argspec: list[str], contents: dict) -> tuple:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         parameter_to_inject = contents.get(arg, None)
-        if parameter_to_inject and i >= len(arglist):
+        if parameter_to_inject is not None and i >= len(arglist):
             arglist.append(parameter_to_inject)
     return (arglist)
 
+def _replace_kwargs(kwargs: dict, contents: dict):
+    for k, v in kwargs.items():
+        if v is None and contents.get(k, None) is not None:
+            kwargs[k] = contents[k]
+    return kwargs
 
 def create_container():
     def container(new: dict={}, contents: dict={}):
         if new:
             contents.update(new)
+
+        def dump():
+            print(contents)
         
         def dec_inject(func):
             @wraps(func)
@@ -22,9 +30,8 @@ def create_container():
                 #if ismethod(func):
                 #    to_inject = func.__func__
                 argspec = getfullargspec(func).args
-                if len(argspec) == len(args):
-                    return func(*args, **kwargs)
-                args = _replace_args(args, argspec, contents)
+                args = _replace_args_by_string(args, argspec, contents)
+                kwargs = _replace_kwargs(kwargs, contents)
                 #if isawaitable(func):
                 #    
                 #    async def tmp():
@@ -36,6 +43,6 @@ def create_container():
             
             return wrapper
         
-        return dec_inject
+        return dec_inject, dump
     return container
 
