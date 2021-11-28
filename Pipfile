@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+bite-di-opengeekv2 = {path = "."}
 
 [dev-packages]
 pytest = "*"
