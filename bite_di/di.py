@@ -1,5 +1,6 @@
-from inspect import getfullargspec
+from inspect import getfullargspec, signature, Parameter, Signature
 from functools import wraps
+from typing import Callable
 
 def _replace_args_by_string(args: tuple, kwargs: dict, argspec: list[str], contents: dict) -> tuple:
     arglist = list(args)
@@ -32,14 +33,15 @@ def _replace_kwargs(kwargs: dict, kwonlyargs: list[str], contents: dict) -> dict
     return kwargs
 
 def create_container():
-    def container(new: dict={}, contents: dict={}):
+    def container(new: dict={}, contents: dict={}, decorated: list = []):
         if new:
             contents.update(new)
 
         def dump():
             print(contents)
         
-        def dec_inject(func):
+        def inject(func):
+            decorated.append(func)
             @wraps(func)
             def wrapper(*args, **kwargs):
                 fullargspec = getfullargspec(func)
@@ -52,7 +54,32 @@ def create_container():
                 return func(*args, **kwargs)
             
             return wrapper
-        
-        return dec_inject, dump
+
+        class Container:
+            def __init__(
+                self,
+                inject: Callable,
+                dump: Callable,
+                decorated: list
+            ):
+                self.inject = inject
+                self.dump = dump
+                self.decorated = decorated
+
+            def __call__(self) -> tuple:
+                return (self.inject, self.dump)
+
+            def generate_test_call(self, f):
+                s = signature(f)
+                call_signature = s.replace()
+                for p in s.parameters.values():
+                    call_signature = s.replace(parameters=[p.replace(annotation=Parameter.empty)], return_annotation=Signature.empty)
+                call = str(call_signature)
+                for key in s.parameters.keys():
+                    call.replace(key, str(contents.get(key)))
+                return f.__name__ + call
+                
+
+        return Container(inject, dump, decorated)
     return container
 
