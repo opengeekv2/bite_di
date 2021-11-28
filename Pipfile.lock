@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "944c1369700a262ed9af088e4e8abbef6b2698647f8896e1017d4393a3e5696e"
+            "sha256": "d5b77ab077bee99b24261e85a0441b2e6dd1befe0e70b8d50b19f71ff44c484a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,15 +15,7 @@
             }
         ]
     },
-    "default": {
-        "bite-di": {
-            "path": ".",
-            "version": "==0.0.1"
-        },
-        "bite-di-opengeekv2": {
-            "path": "."
-        }
-    },
+    "default": {},
     "develop": {
         "alabaster": {
             "hashes": [

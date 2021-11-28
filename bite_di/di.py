@@ -48,7 +48,7 @@ def create_container():
                 kwargs = _merge_named_kwargs(kwargs, fullargspec.varkw, contents)
                 kwargs = _replace_kwonlyargs(kwargs, fullargspec.kwonlyargs, contents)
                 kwargs = _replace_kwargs(kwargs, fullargspec.kwonlyargs, contents)
-                
+
                 return func(*args, **kwargs)
             
             return wrapper
