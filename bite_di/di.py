@@ -1,7 +1,7 @@
 from inspect import getfullargspec
 from functools import wraps
 
-def _replace_args_by_string(args: tuple, kwargs: dict, argspec: list[str], contents: dict) -> list:
+def _replace_args_by_string(args: tuple, kwargs: dict, argspec: list[str], contents: dict) -> tuple:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
