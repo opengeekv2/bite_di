@@ -1,4 +1,5 @@
 import pytest
+from platform import python_version_tuple
 from bite_di import container, inject
 
 
@@ -15,13 +16,15 @@ def test_replaces_function_args_for_container_string_keys_value() -> None:
 
     assert HOLA == greet()
 
+
 falsy_values_except_none = [
-        [], (), {}, set(), '', b'', range(0), 0b0, 0x0, 00, 0, 0.0, 0j, False
+    [], (), {}, set(), '', b'', range(0), 0b0, 0x0, 00, 0, 0.0, 0j, False
 ]
 
-@pytest.mark.parametrize('param', falsy_values_except_none)    
+
+@pytest.mark.parametrize('param', falsy_values_except_none)
 def test_replaces_function_args_for_container_falsy_values_except_none(param) -> None:
-    
+
     contents = {
         'param': param
     }
@@ -33,6 +36,7 @@ def test_replaces_function_args_for_container_falsy_values_except_none(param) ->
         return param
 
     assert param == greet()
+
 
 def test_does_not_replace_none_container_values() -> None:
     contents = {
@@ -65,6 +69,7 @@ def test_not_replaces_function_args_when_passed() -> None:
 
     assert (HELLO + ' ' + NAME) == greet(HELLO)
 
+
 def test_injects_varargs_by_key() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
@@ -80,6 +85,7 @@ def test_injects_varargs_by_key() -> None:
 
     assert (HOLA + ' ' + NAME) == greet()
 
+
 def test_injects_varargs_by_key_but_are_merged_to_passed() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
@@ -94,6 +100,7 @@ def test_injects_varargs_by_key_but_are_merged_to_passed() -> None:
         return '{} {}'.format(greeting, name)
 
     assert (HOLA + ' ' + NAME) == greet(HOLA)
+
 
 def test_replaces_function_with_default_args() -> None:
     HOLA = 'hola'
@@ -112,6 +119,7 @@ def test_replaces_function_with_default_args() -> None:
 
     assert (HOLA + ' ' + NAME) == greet()
 
+
 def test_replaces_none_kwargs_with_ones_in_container() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
@@ -128,6 +136,7 @@ def test_replaces_none_kwargs_with_ones_in_container() -> None:
         return '{} {}'.format(greeting, name)
 
     assert (HOLA + ' ' + NAME) == greet(greeting=None, name=None)
+
 
 def test_not_replaces_provided_kwargs_with_ones_in_container() -> None:
     HOLA = 'hola'
@@ -150,6 +159,7 @@ def test_not_replaces_provided_kwargs_with_ones_in_container() -> None:
     assert (HELLO + ' ' + NAME) == greet(greeting=HELLO, name=None)
     assert (HOLA + ' ' + OTHER_NAME) == greet(greeting=None, name=OTHER_NAME)
 
+
 def test_respects_passed_posiotional_or_keyword_args():
     HOLA = 'hola'
     NAME = 'John Cleese'
@@ -167,6 +177,7 @@ def test_respects_passed_posiotional_or_keyword_args():
 
     assert (HOLA + ' ' + OTHER_NAME) == greet(name=OTHER_NAME)
 
+
 def test_replaces_kwonly_args():
     HOLA = 'hola'
     NAME = 'John Cleese'
@@ -182,6 +193,7 @@ def test_replaces_kwonly_args():
         return '{} {}'.format(greeting, name)
 
     assert (HOLA + ' ' + NAME) == greet()
+
 
 def test_replaces_named_kwargs_args():
     HOLA = 'hola'
@@ -202,9 +214,9 @@ def test_replaces_named_kwargs_args():
     assert (HOLA + ' ' + NAME) == greet()
 
 
-@pytest.mark.parametrize('param', falsy_values_except_none)    
+@pytest.mark.parametrize('param', falsy_values_except_none)
 def test_replaces_function_kwargs_for_container_falsy_values_except_none(param) -> None:
-    
+
     contents = {
         'key': param
     }
@@ -216,6 +228,7 @@ def test_replaces_function_kwargs_for_container_falsy_values_except_none(param) 
         return kwargs['key']
 
     assert param == greet(key=None)
+
 
 def test_replaces_args_and_kwargs() -> None:
     HOLA = 'hola'
@@ -235,69 +248,71 @@ def test_replaces_args_and_kwargs() -> None:
         return '{} {} {} {}'.format(greeting, name, other_greeting, other_name)
 
     assert (HOLA + ' ' + NAME + ' ' + HELLO + ' ' + OTHER_NAME
-        == greet(HOLA, NAME, other_greeting=HELLO, other_name=OTHER_NAME))
+            == greet(HOLA, NAME, other_greeting=HELLO, other_name=OTHER_NAME))
 
-def test_all_types_of_params():
 
-    contents = {
-        'posonly': 1,
-        'pos': 2,
-        'fulltuple': (1, 2),
-        'kwonly': 'hola',
-        'fulldict': {
-            'greeting': 'hola',
+if float('.'.join(python_version_tuple()[0:2])) >= 3.8:
+    def test_all_types_of_params():
+
+        contents = {
+            'posonly': 1,
+            'pos': 2,
+            'fulltuple': (1, 2),
+            'kwonly': 'hola',
+            'fulldict': {
+                'greeting': 'hola',
+            }
         }
-    }
-    container(contents)
+        container(contents)
 
-    @inject
-    def difficult(posonly, /, pos, *fulltuple, kwonly=None, **fulldict):
-        return {
-            'posonly': posonly,
-            'pos': pos,
-            'fulltuple': fulltuple,
-            'kwonly': kwonly,
-            'fulldict': fulldict
-        }
-    result = difficult()
+        @inject
+        def difficult(posonly, /, pos, *fulltuple, kwonly=None, **fulldict):
+            return {
+                'posonly': posonly,
+                'pos': pos,
+                'fulltuple': fulltuple,
+                'kwonly': kwonly,
+                'fulldict': fulldict
+            }
+        result = difficult()
 
-    assert contents == result
+        assert contents == result
 
-def test_all_types_of_params_with_extras():
+    def test_all_types_of_params_with_extras():
 
-    contents = {
-        'posonly': 1,
-        'pos': 2,
-        'fulltuple': (1, 2),
-        'kwonly': 'hola',
-        'fulldict': {
-            'greeting': 'hola',
-        },
-        'name': 'Michael Palin'
-    }
-    container(contents)
-
-    @inject
-    def difficult(posonly, /, pos, *fulltuple, kwonly=None, **fulldict):
-        return {
-            'posonly': posonly,
-            'pos': pos,
-            'fulltuple': fulltuple,
-            'kwonly': kwonly,
-            'fulldict': fulldict,
-            'name': fulldict['name']
-        }
-    result = difficult(3, 4, 5, 6, kwonly='adeu', name=None)
-    expected = {
-        'posonly': 3,
-        'pos': 4,
-        'fulltuple': (5, 6, 1, 2),
-        'kwonly': 'adeu',
-        'fulldict': {
-            'greeting': 'hola',
+        contents = {
+            'posonly': 1,
+            'pos': 2,
+            'fulltuple': (1, 2),
+            'kwonly': 'hola',
+            'fulldict': {
+                'greeting': 'hola',
+            },
             'name': 'Michael Palin'
-        },
-        'name': 'Michael Palin'
-    }
+        }
+        container(contents)
 
-    assert expected == result
+        @inject
+        def difficult(posonly, /, pos, *fulltuple, kwonly=None, **fulldict):
+            return {
+                'posonly': posonly,
+                'pos': pos,
+                'fulltuple': fulltuple,
+                'kwonly': kwonly,
+                'fulldict': fulldict,
+                'name': fulldict['name']
+            }
+        result = difficult(3, 4, 5, 6, kwonly='adeu', name=None)
+        expected = {
+            'posonly': 3,
+            'pos': 4,
+            'fulltuple': (5, 6, 1, 2),
+            'kwonly': 'adeu',
+            'fulldict': {
+                'greeting': 'hola',
+                'name': 'Michael Palin'
+            },
+            'name': 'Michael Palin'
+        }
+
+        assert expected == result
