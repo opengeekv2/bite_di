@@ -25,17 +25,22 @@ jobs:
           pip install pipfile-requirements flake8 lintly mypy pytest pytest-cov
           pipfile2req > requirements.txt
           pip install -r requirements.txt
-      - if: ${{ matrix.python-version == '3.7' }}
-        name: Lint with flake8 output to lintly
-        run: flake8 ./bite_di | lintly
+      - if: ${{ github.event_name == 'push'}}
+        name: Lint with flake8
+        run: flake8 ./bite_di
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-      - if: ${{ matrix.python-version != '3.7' }}
+      - if: ${{ github.event_name != 'push' }}
         name: Lint with flake8
         run: flake8 ./bite_di | lintly
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-      - if: ${{ matrix.python-version == '3.10' }}
+      - if: ${{ matrix.python-version == '3.10' && github.event_name == 'push' }}
+        name: Lint with flake8
+        run: flake8 ./tests
+        env:
+          LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ matrix.python-version == '3.10'  && github.event_name != 'push'}}
         name: Lint with flake8
         run: flake8 ./tests | lintly
         env:
