@@ -30,7 +30,7 @@ jobs:
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
           LINTLY_REPO: ${{ github.repository }}
-          LINTLY_PR: ${{ github.event.pull_request.number }}"
+          LINTLY_PR: ${{ github.event.pull_request.number }}
       - name: Test with pytest
         run: |
           python -m pytest
