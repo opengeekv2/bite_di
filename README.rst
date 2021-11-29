@@ -2,6 +2,7 @@ Bite Dependency Injection
 =========================
 
 .. image:: https://github.com/opengeekv2/bite_di/actions/workflows/ci.yml/badge.svg
+    :alt: ci badge
 
 .. image:: https://codecov.io/gh/opengeekv2/bite_di/branch/main/graph/badge.svg?token=8X8XL7D1D6
     :alt: Codecov badge
