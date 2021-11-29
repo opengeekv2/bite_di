@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-mypy = "*"
 
 [dev-packages]
 pytest = "*"
@@ -13,6 +12,8 @@ cohesion = "*"
 pydeps = "*"
 module-coupling-metrics = "*"
 sphinx = "*"
+autopep8 = "*"
+flake8 = "*"
 mypy = "*"
 
 [requires]

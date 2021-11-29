@@ -1,3 +1,3 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(name="bite_di", packages=["bite_di"],)
