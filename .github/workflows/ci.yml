@@ -22,15 +22,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pipfile-requirements flake8 lintly pytest
+          pip install pipfile-requirements flake8 pytest
           pipfile2req > requirements.txt
           pip install -r requirements.txt
       - name: Lint with flake8
-        run: flake8 | lintly
-        env:
-          LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-          LINTLY_REPO: ${{ github.repository }}
-          LINTLY_PR: ${{ github.event.pull_request.number }}
+        run: flake8
       - name: Test with pytest
         run: |
           python -m pytest
