@@ -22,9 +22,9 @@ Key features:
 - [x] Private containers
 - [x] Full Python setup (no config files in YAML or XML) 
 - [x] @inject decorator
-  - [x] inject name-matching positional agruments
-  - [ ] inject name-matching keyword only arguments 
-  - [x] inject name-matching keyword arguments passed as None
+- [x] inject name-matching positional agruments
+- [x] inject name-matching keyword only arguments 
+- [x] inject name-matching keyword arguments passed as None
 - [x] Basic container dump 
 
 Using the public container
