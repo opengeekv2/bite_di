@@ -1,6 +1,10 @@
 Bite Dependency Injection
 =========================
 
+.. image:: https://codecov.io/gh/opengeekv2/bite_di/branch/main/graph/badge.svg?token=8X8XL7D1D6
+    :alt: Codecov badge
+    :target: https://codecov.io/gh/opengeekv2/bite_di
+
 Bitesized Dependency Injection library for Python.
 
 Provides a easy and low footprint solution to inject dependecies to your Python functions and classes.
