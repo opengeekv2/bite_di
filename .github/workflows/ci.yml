@@ -29,6 +29,8 @@ jobs:
         run: flake8 | lintly
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+          LINTLY_REPO: ${{ GITHUB_REPOSITORY }}
+          LINTLY_PR: ${{ github.event.pull_request.number }}"
       - name: Test with pytest
         run: |
           python -m pytest
