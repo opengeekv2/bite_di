@@ -23,7 +23,8 @@ falsy_values_except_none = [
 
 
 @pytest.mark.parametrize('param', falsy_values_except_none)
-def test_replaces_function_args_for_container_falsy_values_except_none(param) -> None:
+def test_replaces_function_args_for_container_falsy_values_except_none(
+        param) -> None:
 
     contents = {
         'param': param
@@ -215,7 +216,8 @@ def test_replaces_named_kwargs_args():
 
 
 @pytest.mark.parametrize('param', falsy_values_except_none)
-def test_replaces_function_kwargs_for_container_falsy_values_except_none(param) -> None:
+def test_replaces_function_kwargs_for_container_falsy_values_except_none(
+        param) -> None:
 
     contents = {
         'key': param

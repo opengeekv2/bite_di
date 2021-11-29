@@ -1,4 +1,3 @@
-import pytest
 from bite_di import container, inject
 
 

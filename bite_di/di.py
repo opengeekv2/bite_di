@@ -3,7 +3,9 @@ from functools import wraps
 from typing import Callable, List
 
 
-def _replace_args_by_string(args: tuple, kwargs: dict, argspec: List[str], contents: dict) -> tuple:
+def _replace_args_by_string(
+        args: tuple, kwargs: dict, argspec: List[str],
+        contents: dict) -> tuple:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
@@ -17,7 +19,9 @@ def _merge_varargs(args: tuple, varargs: str, contents: dict) -> tuple:
     return args + contents.get(varargs, ())
 
 
-def _replace_kwonlyargs(kwargs: dict, kwonlyargs: List[str], contents: dict) -> dict:
+def _replace_kwonlyargs(
+        kwargs: dict, kwonlyargs: List[str],
+        contents: dict) -> dict:
     for kwonlyarg in kwonlyargs:
         if kwonlyarg not in kwargs.keys():
             parameter_to_inject = contents.get(kwonlyarg, None)
@@ -31,9 +35,12 @@ def _merge_named_kwargs(kwargs: dict, varkw: str, contents: dict) -> dict:
     return kwargs
 
 
-def _replace_kwargs(kwargs: dict, kwonlyargs: List[str], contents: dict) -> dict:
+def _replace_kwargs(
+        kwargs: dict, kwonlyargs: List[str],
+        contents: dict) -> dict:
     for k, v in kwargs.items():
-        if v is None and k not in kwonlyargs and contents.get(k, None) is not None:
+        if v is None and k not in kwonlyargs and contents.get(
+                k, None) is not None:
             kwargs[k] = contents[k]
     return kwargs
 
@@ -84,8 +91,9 @@ def create_container():
                 s = signature(f)
                 call_signature = s.replace()
                 for p in s.parameters.values():
-                    call_signature = s.replace(parameters=[p.replace(
-                        annotation=Parameter.empty)], return_annotation=Signature.empty)
+                    call_signature = s.replace(
+                        parameters=[p.replace(annotation=Parameter.empty)],
+                        return_annotation=Signature.empty)
                 call = str(call_signature)
                 for key in s.parameters.keys():
                     call.replace(key, str(contents.get(key)))

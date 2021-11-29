@@ -15,6 +15,7 @@ module-coupling-metrics = "*"
 sphinx = "*"
 mypy = "*"
 autopep8 = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.10"
