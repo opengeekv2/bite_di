@@ -1,8 +1,6 @@
+from __future__ import annotations
 import pytest
 from bite_di import container, inject
-import platform
-if float('.'.join(platform.python_version_tuple()[0:2])) < 3.8:
-    from __future__ import annotations
 
 
 def test_replaces_function_args_for_container_string_keys_value() -> None:
