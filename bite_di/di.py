@@ -1,9 +1,9 @@
 from inspect import getfullargspec, signature, Parameter, Signature
 from functools import wraps
-from typing import Callable, Dict
+from typing import Callable, List
 
 
-def _replace_args_by_string(args: tuple, kwargs: Dict, argspec: list[str], contents: Dict) -> tuple:
+def _replace_args_by_string(args: tuple, kwargs: dict, argspec: List[str], contents: dict) -> tuple:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
@@ -13,11 +13,11 @@ def _replace_args_by_string(args: tuple, kwargs: Dict, argspec: list[str], conte
     return tuple(arglist)
 
 
-def _merge_varargs(args: tuple, varargs: str, contents: Dict) -> tuple:
+def _merge_varargs(args: tuple, varargs: str, contents: dict) -> tuple:
     return args + contents.get(varargs, ())
 
 
-def _replace_kwonlyargs(kwargs: Dict, kwonlyargs: list[str], contents: Dict) -> Dict:
+def _replace_kwonlyargs(kwargs: dict, kwonlyargs: List[str], contents: dict) -> dict:
     for kwonlyarg in kwonlyargs:
         if kwonlyarg not in kwargs.keys():
             parameter_to_inject = contents.get(kwonlyarg, None)
@@ -26,12 +26,12 @@ def _replace_kwonlyargs(kwargs: Dict, kwonlyargs: list[str], contents: Dict) -> 
     return kwargs
 
 
-def _merge_named_kwargs(kwargs: Dict, varkw: str, contents: Dict) -> Dict:
+def _merge_named_kwargs(kwargs: dict, varkw: str, contents: dict) -> dict:
     kwargs.update(contents.get(varkw, {}).copy())
     return kwargs
 
 
-def _replace_kwargs(kwargs: Dict, kwonlyargs: list[str], contents: Dict) -> Dict:
+def _replace_kwargs(kwargs: dict, kwonlyargs: List[str], contents: dict) -> dict:
     for k, v in kwargs.items():
         if v is None and k not in kwonlyargs and contents.get(k, None) is not None:
             kwargs[k] = contents[k]
@@ -39,7 +39,7 @@ def _replace_kwargs(kwargs: Dict, kwonlyargs: list[str], contents: Dict) -> Dict
 
 
 def create_container():
-    def container(new: Dict = {}, contents: Dict = {}, decorated: list = []):
+    def container(new: dict = {}, contents: dict = {}, decorated: list = []):
         if new:
             contents.update(new)
 
