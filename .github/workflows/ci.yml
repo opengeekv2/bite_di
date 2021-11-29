@@ -34,4 +34,5 @@ jobs:
         name: Check types with mypy
         run: mypy -p bite_di
       - name: Test with pytest
-        run: python -m pytest
+        run: python -m pytest --cov=./ --cov-report=xml
+      - uses: codecov/codecov-action@v1
