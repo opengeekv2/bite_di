@@ -46,7 +46,9 @@ def _replace_kwargs(
 
 
 def create_container() -> Callable:
-    def container(new: dict = {}, contents: dict = {}, decorated: list = []) -> Callable:
+    def container(
+            new: dict = {}, contents: dict = {},
+            decorated: list = []) -> Callable:
         if new:
             contents.update(new)
 
