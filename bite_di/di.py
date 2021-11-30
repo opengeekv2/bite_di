@@ -45,25 +45,27 @@ def _replace_kwargs(
     return kwargs
 
 
-def create_container():
-    def container(new: dict = {}, contents: dict = {}, decorated: list = []):
+def create_container() -> Callable:
+    def container(new: dict = {}, contents: dict = {}, decorated: list = []) -> Callable:
         if new:
             contents.update(new)
 
-        def dump():
+        def dump() -> None:
             print(contents)
 
-        def inject(func):
+        def inject(func) -> Callable:
             decorated.append(func)
 
             @wraps(func)
-            def wrapper(*args, **kwargs):
+            def wrapper(*args: list, **kwargs: dict) -> Callable:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
-                args = _merge_varargs(args, fullargspec.varargs, contents)
-                kwargs = _merge_named_kwargs(
-                    kwargs, fullargspec.varkw, contents)
+                if fullargspec.varargs is not None:
+                    args = _merge_varargs(args, fullargspec.varargs, contents)
+                if fullargspec.varkw is not None:
+                    kwargs = _merge_named_kwargs(
+                        kwargs, fullargspec.varkw, contents)
                 kwargs = _replace_kwonlyargs(
                     kwargs, fullargspec.kwonlyargs, contents)
                 kwargs = _replace_kwargs(
