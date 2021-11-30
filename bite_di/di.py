@@ -4,8 +4,8 @@ from typing import Callable, List, Dict, Tuple, cast
 
 
 def _replace_args_by_string(
-        args: Tuple[object, ...], kwargs: Dict[str, object], argspec: List[str],
-        contents: Dict[str, object]) -> tuple:
+        args: Tuple[object, ...], kwargs: Dict[str, object],
+        argspec: List[str], contents: Dict[str, object]) -> tuple:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
