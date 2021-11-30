@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pipfile-requirements flake8 lintly mypy pytest pytest-cov
+          pip install pipfile-requirements flake8 lintly mypy lxml pytest pytest-cov
           pipfile2req > requirements.txt
           pip install -r requirements.txt
       - if: ${{ github.event_name == 'push'}}
