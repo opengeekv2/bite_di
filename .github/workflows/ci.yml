@@ -54,7 +54,8 @@ jobs:
       - if: ${{ matrix.python-version != 'pypy-3.8' }}
         name: Check types with mypy
         run: mypy -p bite_di --cobertura-xml-report .
-      - uses: codecov/codecov-action@v2
+      - if: ${{ matrix.python-version != 'pypy-3.8' }}
+        uses: codecov/codecov-action@v2
         with:
           files: cobertura.xml
           flags: type-coverage
