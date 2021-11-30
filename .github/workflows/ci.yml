@@ -48,11 +48,13 @@ jobs:
       - if: ${{ matrix.python-version != 'pypy-3.8' }}
         name: Check types with mypy
         run: mypy -p bite_di --cobertura-xml-report .
-      - uses: codecov/codecov-action@v1
-        files: cobertura.xml
-        flags: type-coverage
+      - uses: codecov/codecov-action@v2
+        with:
+          files: cobertura.xml
+          flags: type-coverage
       - name: Test with pytest
         run: python -m pytest --cov=./ --cov-report=xml
-      - uses: codecov/codecov-action@v1
-        files: coverage.xml
-        flags: test-coverage
+      - uses: codecov/codecov-action@v2
+        with:
+          files: coverage.xml
+          flags: test-coverage
