@@ -30,9 +30,14 @@ jobs:
         run: flake8 ./bite_di
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-      - if: ${{ github.event_name != 'push' }}
+      - if: ${{ matrix.python-version == '3.7' && github.event_name != 'push' }}
         name: Lint with flake8
         run: flake8 ./bite_di | lintly
+        env:
+          LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+      - if: ${{ matrix.python-version != '3.7' && github.event_name != 'push' }}
+        name: Lint with flake8
+        run: flake8 ./bite_di
         env:
           LINTLY_API_KEY: ${{ secrets.GITHUB_TOKEN }}
       - if: ${{ matrix.python-version == '3.10' && github.event_name == 'push' }}
