@@ -95,17 +95,5 @@ def create_container() -> Callable:
             def __call__(self) -> Tuple[Callable, Callable]:
                 return (self.inject, self.dump)
 
-            def generate_test_call(self, f: Callable) -> str:
-                s = signature(f)
-                call_signature = s.replace()
-                for p in s.parameters.values():
-                    call_signature = s.replace(
-                        parameters=[p.replace(annotation=Parameter.empty)],
-                        return_annotation=Signature.empty)
-                call = str(call_signature)
-                for key in s.parameters.keys():
-                    call.replace(key, str(contents.get(key)))
-                return f.__name__ + call
-
         return Container(inject, dump, decorated)
     return container
