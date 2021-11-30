@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipfile-requirements flake8 lintly mypy lxml pytest pytest-cov pipx
           pipx install poetry
-          poetry export --default -f requirements.txt --output requirements.txt
+          poetry export -f requirements.txt --output requirements.txt
           pip install -r requirements.txt
       - if: ${{ github.event_name == 'push'}}
         name: Lint with flake8
