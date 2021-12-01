@@ -51,9 +51,7 @@ def _replace_kwargs(
 
 
 class Container:
-    def __init__(
-        self
-    ):
+    def __init__(self) -> None:
         self.decorated: List[Callable[..., Any]] = []
         self.dump: Callable[[], None] = lambda: print()
 
