@@ -1,11 +1,12 @@
 from inspect import getfullargspec
 from functools import wraps
-from typing import Callable, List, Dict, Tuple, cast
+from typing import Callable, List, Dict, Tuple, cast, TypeVar
 
 
 def _replace_args_by_string(
         args: Tuple[object, ...], kwargs: Dict[str, object],
-        argspec: List[str], contents: Dict[str, object]) -> tuple:
+        argspec: List[str], contents: Dict[str, object]
+        ) -> Tuple[object, ...]:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
@@ -17,7 +18,7 @@ def _replace_args_by_string(
 
 def _merge_varargs(
         args: Tuple[object, ...], varargs: str,
-        contents: Dict[str, object]) -> tuple:
+        contents: Dict[str, object]) -> Tuple[object, ...]:
     return args + cast(Tuple[object, ...], contents.get(varargs, ()))
 
 
@@ -52,14 +53,16 @@ def _replace_kwargs(
 def create_container() -> Callable:
     def container(
             new: Dict[str, object] = {}, contents: Dict[str, object] = {},
-            decorated: List = [Callable]) -> Callable:
+            decorated: List[Callable] = []) -> Callable:
         if new:
             contents.update(new)
 
         def dump() -> None:
             print(contents)
 
-        def inject(func: Callable) -> Callable:
+        T = TypeVar('T')
+
+        def inject(func: Callable[..., T]) -> Callable:
             decorated.append(func)
 
             @wraps(func)
@@ -84,9 +87,9 @@ def create_container() -> Callable:
         class Container:
             def __init__(
                 self,
-                inject: Callable,
+                inject: Callable[..., T],
                 dump: Callable,
-                decorated: list
+                decorated: List[Callable]
             ):
                 self.inject = inject
                 self.dump = dump
