@@ -50,15 +50,28 @@ def _replace_kwargs(
     return kwargs
 
 
-def create_container() -> Callable:
-    def container(
-            new: Dict[str, object] = {}, contents: Dict[str, object] = {},
-            decorated: List[Callable[..., Any]] = []) -> Callable[..., Any]:
+class Container:
+    def __init__(
+        self
+    ):
+        self.decorated = []
+        self.dump = lambda: print()
+
+    def __call__(
+            self, new: Dict[str, object] = {},
+            contents: Dict[str, object] = {},
+            decorated: List[Callable[..., Any]] = []
+            ) -> Tuple[
+                Callable[[Callable[..., Any]], Callable[..., Any]],
+                Callable[[], None]]:
+
         if new:
             contents.update(new)
 
         def dump() -> None:
             print(contents)
+
+        self.dump = dump
 
         T = TypeVar('T')
 
@@ -83,20 +96,8 @@ def create_container() -> Callable:
                 return func(*args, **kwargs)
 
             return wrapper
+        return inject, dump
 
-        class Container:
-            def __init__(
-                self,
-                inject: Callable[..., T],
-                dump: Callable,
-                decorated: List[Callable[..., Any]]
-            ):
-                self.inject = inject
-                self.dump = dump
-                self.decorated = decorated
 
-            def __call__(self) -> Tuple[Callable, Callable]:
-                return (self.inject, self.dump)
-
-        return Container(inject, dump, decorated)
-    return container
+def create_container() -> Container:
+    return Container()
