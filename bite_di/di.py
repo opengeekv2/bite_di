@@ -50,7 +50,7 @@ def _replace_kwargs(
     return kwargs
 
 
-F = TypeVar('F', bound=Callable[..., Any])
+F = TypeVar('F', bound=Callable[..., object])
 
 
 class Container:
