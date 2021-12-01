@@ -79,7 +79,7 @@ class Container:
             decorated.append(func)
 
             @wraps(func)
-            def wrapper(*args, **kwargs) -> Any:
+            def wrapper(*args: object, **kwargs: object) -> object:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
