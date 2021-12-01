@@ -1,11 +1,12 @@
 from inspect import getfullargspec
 from functools import wraps
-from typing import Callable, List, Dict, Tuple, Any
+from typing import Callable, List, Dict, Tuple, cast, TypeVar, Any
 
 
 def _replace_args_by_string(
-        args: Tuple[Any, ...], kwargs: Dict[str, Any], argspec: List[str],
-        contents: Dict[str, Any]) -> tuple:
+        args: Tuple[object, ...], kwargs: Dict[str, object],
+        argspec: List[str], contents: Dict[str, object]
+        ) -> Tuple[object, ...]:
     arglist = list(args)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
@@ -16,14 +17,14 @@ def _replace_args_by_string(
 
 
 def _merge_varargs(
-        args: Tuple[Any, ...], varargs: str,
-        contents: Dict[str, Any]) -> tuple:
-    return args + contents.get(varargs, ())
+        args: Tuple[object, ...], varargs: str,
+        contents: Dict[str, object]) -> Tuple[object, ...]:
+    return args + cast(Tuple[object, ...], contents.get(varargs, ()))
 
 
 def _replace_kwonlyargs(
-        kwargs: Dict[str, Any], kwonlyargs: List[str],
-        contents: Dict[str, Any]) -> Dict[str, Any]:
+        kwargs: Dict[str, object], kwonlyargs: List[str],
+        contents: Dict[str, object]) -> Dict[str, object]:
     for kwonlyarg in kwonlyargs:
         if kwonlyarg not in kwargs.keys():
             parameter_to_inject = contents.get(kwonlyarg, None)
@@ -33,15 +34,15 @@ def _replace_kwonlyargs(
 
 
 def _merge_named_kwargs(
-        kwargs: Dict[str, Any], varkw: str,
-        contents: Dict[str, Any]) -> Dict[str, Any]:
-    kwargs.update(contents.get(varkw, {}).copy())
+        kwargs: Dict[str, object], varkw: str,
+        contents: Dict[str, object]) -> Dict[str, object]:
+    kwargs.update(cast(Dict[str, object], contents.get(varkw, {})).copy())
     return kwargs
 
 
 def _replace_kwargs(
-        kwargs: Dict[str, Any], kwonlyargs: List[str],
-        contents: Dict[str, Any]) -> Dict[str, Any]:
+        kwargs: Dict[str, object], kwonlyargs: List[str],
+        contents: Dict[str, object]) -> Dict[str, object]:
     for k, v in kwargs.items():
         if v is None and k not in kwonlyargs and contents.get(
                 k, None) is not None:
@@ -51,19 +52,21 @@ def _replace_kwargs(
 
 def create_container() -> Callable:
     def container(
-            new: Dict[str, Any] = {}, contents: Dict[str, Any] = {},
-            decorated: List = [Callable]) -> Callable:
+            new: Dict[str, object] = {}, contents: Dict[str, object] = {},
+            decorated: List[Callable[..., Any]] = []) -> Callable[..., Any]:
         if new:
             contents.update(new)
 
         def dump() -> None:
             print(contents)
 
-        def inject(func: Callable) -> Callable:
+        T = TypeVar('T')
+
+        def inject(func: Callable[..., T]) -> Callable[..., T]:
             decorated.append(func)
 
             @wraps(func)
-            def wrapper(*args: Any, **kwargs: Dict[str, Any]) -> Any:
+            def wrapper(*args: object, **kwargs: object) -> T:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
@@ -84,9 +87,9 @@ def create_container() -> Callable:
         class Container:
             def __init__(
                 self,
-                inject: Callable,
+                inject: Callable[..., T],
                 dump: Callable,
-                decorated: list
+                decorated: List[Callable[..., Any]]
             ):
                 self.inject = inject
                 self.dump = dump
