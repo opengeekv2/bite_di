@@ -54,8 +54,8 @@ class Container:
     def __init__(
         self
     ):
-        self.decorated = []
-        self.dump = lambda: print()
+        self.decorated: List[Callable[..., Any]] = []
+        self.dump: Callable[[], None] = lambda: print()
 
     def __call__(
             self, new: Dict[str, object] = {},
