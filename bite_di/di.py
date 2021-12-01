@@ -1,6 +1,6 @@
 from inspect import getfullargspec
 from functools import wraps
-from typing import Callable, List, Dict, Tuple, cast, TypeVar
+from typing import Callable, List, Dict, Tuple, cast, TypeVar, Any
 
 
 def _replace_args_by_string(
@@ -53,7 +53,7 @@ def _replace_kwargs(
 def create_container() -> Callable:
     def container(
             new: Dict[str, object] = {}, contents: Dict[str, object] = {},
-            decorated: List[Callable] = []) -> Callable:
+            decorated: List[Callable[..., Any]] = []) -> Callable[..., Any]:
         if new:
             contents.update(new)
 
@@ -62,11 +62,11 @@ def create_container() -> Callable:
 
         T = TypeVar('T')
 
-        def inject(func: Callable[..., T]) -> Callable:
+        def inject(func: Callable[..., T]) -> Callable[..., T]:
             decorated.append(func)
 
             @wraps(func)
-            def wrapper(*args: object, **kwargs: object) -> object:
+            def wrapper(*args: object, **kwargs: object) -> T:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
@@ -89,7 +89,7 @@ def create_container() -> Callable:
                 self,
                 inject: Callable[..., T],
                 dump: Callable,
-                decorated: List[Callable]
+                decorated: List[Callable[..., Any]]
             ):
                 self.inject = inject
                 self.dump = dump
