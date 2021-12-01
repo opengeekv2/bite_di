@@ -50,7 +50,11 @@ def _replace_kwargs(
     return kwargs
 
 
+F = TypeVar('F', bound=Callable[..., object])
+
+
 class Container:
+
     def __init__(self) -> None:
         self.decorated: List[Callable[..., Any]] = []
         self.dump: Callable[[], None] = lambda: print()
@@ -60,7 +64,7 @@ class Container:
             contents: Dict[str, object] = {},
             decorated: List[Callable[..., Any]] = []
             ) -> Tuple[
-                Callable[[Callable[..., Any]], Callable[..., Any]],
+                Callable[[F], F],
                 Callable[[], None]]:
 
         if new:
@@ -71,13 +75,11 @@ class Container:
 
         self.dump = dump
 
-        T = TypeVar('T')
-
-        def inject(func: Callable[..., T]) -> Callable[..., T]:
+        def inject(func: F) -> F:
             decorated.append(func)
 
             @wraps(func)
-            def wrapper(*args: object, **kwargs: object) -> T:
+            def wrapper(*args: object, **kwargs: object) -> object:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
@@ -93,7 +95,7 @@ class Container:
 
                 return func(*args, **kwargs)
 
-            return wrapper
+            return cast('F', wrapper)
         return inject, dump
 
 

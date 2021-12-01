@@ -1,17 +1,18 @@
 from __future__ import annotations
+from typing import Dict
 import pytest
 from bite_di import container, inject
 
 
 def test_replaces_function_args_for_container_string_keys_value() -> None:
     HOLA = 'hola'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA
     }
     container(contents)
 
     @inject
-    def greet(greeting: str):
+    def greet(greeting: str = None):
         return greeting
 
     assert HOLA == greet()
@@ -33,14 +34,14 @@ def test_replaces_function_args_for_container_falsy_values_except_none(
     container(contents)
 
     @inject
-    def greet(param):
+    def greet(param=None):
         return param
 
     assert param == greet()
 
 
 def test_does_not_replace_none_container_values() -> None:
-    contents = {
+    contents: Dict[str, object] = {
         'param': None
     }
 
@@ -58,14 +59,14 @@ def test_not_replaces_function_args_when_passed() -> None:
     HOLA = 'hola'
     HELLO = 'hello'
     NAME = 'John Cleese'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA,
         'name': NAME
     }
     container(contents)
 
     @inject
-    def greet(greeting: str, name: str):
+    def greet(greeting: str, name: str = None):
         return '{} {}'.format(greeting, name)
 
     assert (HELLO + ' ' + NAME) == greet(HELLO)
@@ -74,7 +75,7 @@ def test_not_replaces_function_args_when_passed() -> None:
 def test_injects_varargs_by_key() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = {
+    contents: Dict[str, object] = {
         'fullgreeting': (HOLA, NAME)
     }
     container(contents)
@@ -90,7 +91,7 @@ def test_injects_varargs_by_key() -> None:
 def test_injects_varargs_by_key_but_are_merged_to_passed() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = {
+    contents: Dict[str, object] = {
         'fullgreeting': tuple([NAME])
     }
     container(contents)
@@ -108,7 +109,7 @@ def test_replaces_function_with_default_args() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA,
         'name': NAME
     }
@@ -124,7 +125,7 @@ def test_replaces_function_with_default_args() -> None:
 def test_replaces_none_kwargs_with_ones_in_container() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA,
         'name': NAME
     }
@@ -144,7 +145,7 @@ def test_not_replaces_provided_kwargs_with_ones_in_container() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA,
         'name': NAME
     }
@@ -237,7 +238,7 @@ def test_replaces_args_and_kwargs() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = {
+    contents: Dict[str, object] = {
         'greeting': HOLA,
         'name': NAME,
     }
