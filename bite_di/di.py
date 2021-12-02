@@ -6,7 +6,7 @@ from typing import Callable, List, Dict, DefaultDict, Tuple, cast, TypeVar, Any,
 class Contents(DefaultDict[str, Callable[[], Any]]):
     def from_var_dict(self, vardict: Dict[str, Any]) -> None:
         c = Contents()
-        c.update(dict(list(map(lambda x: (x[0], lambda: x[1]), vardict.items()))))
+        c.update(list(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
 
     def add_var(self, key: str, var: Any) -> None:
         def wrapper():
@@ -24,8 +24,8 @@ def _replace_args_by_string(
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
             parameter_to_inject = contents.get(arg, lambda: None)
-            if parameter_to_inject() is not None and i >= len(arglist):
-                arglist.append(parameter_to_inject)
+            if parameter_to_inject is not None and i >= len(arglist):
+                arglist.append(parameter_to_inject())
     return tuple(arglist)
 
 
@@ -48,7 +48,7 @@ def _replace_kwonlyargs(
 
 def _merge_named_kwargs(
         kwargs: Dict[str, object], varkw: str,
-        contents: Contents) -> Dict[str, object]:
+        contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
     parameter_to_inject = contents.get(varkw, lambda: None)()
     if parameter_to_inject is not None: 
         kwargs.update( cast( Dict[str, object], parameter_to_inject ).copy() )
@@ -57,7 +57,7 @@ def _merge_named_kwargs(
 
 def _replace_kwargs(
         kwargs: Dict[str, object], kwonlyargs: List[str],
-        contents: Contents) -> Dict[str, object]:
+        contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
     for k, v in kwargs.items():
         if v is None and k not in kwonlyargs and contents.get(
                 k, lambda: None)() is not None:
