@@ -1,4 +1,4 @@
-from bite_di import container
+from bite_di import container, Contents
 from bite_di.di import create_container
 
 
@@ -15,9 +15,8 @@ def test_container_not_recreated_after_create_container() -> None:
 
 def test_container_dump(capsys):
     container = create_container()
-    contents = {
-        'greeting': 'hola'
-    }
+    contents = Contents()
+    contents['greeting'] = 'a'
     container.dump()
     container(contents)
     container.dump()

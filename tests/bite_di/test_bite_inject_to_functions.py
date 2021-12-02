@@ -1,14 +1,13 @@
 from __future__ import annotations
 from typing import Dict
 import pytest
-from bite_di import container, inject
+from bite_di import container, inject, Contents
 
 
 def test_replaces_function_args_for_container_string_keys_value() -> None:
     HOLA = 'hola'
-    contents: Dict[str, object] = {
-        'greeting': HOLA
-    }
+    contents = Contents()
+    contents.add_var('greeting', HOLA)
     container(contents)
 
     @inject
@@ -27,8 +26,9 @@ falsy_values_except_none = [
 def test_replaces_function_args_for_container_falsy_values_except_none(
         param) -> None:
 
+
     contents = {
-        'param': param
+        'param': lambda: param
     }
 
     container(contents)
