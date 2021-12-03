@@ -1,7 +1,7 @@
 from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, DefaultDict
-from typing import Tuple, cast, TypeVar, Any
+from typing import Tuple, cast, TypeVar
 
 
 def _none_function() -> None:
