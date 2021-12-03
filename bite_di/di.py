@@ -1,4 +1,4 @@
-from inspect import getfullargspec, ismethod
+from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, DefaultDict, Tuple, cast, TypeVar, Any
 
