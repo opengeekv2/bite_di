@@ -57,14 +57,37 @@ def test_not_replace_self_in_method():
     assert prova == prova.prova_self(HOLA)
 
 
-def test_replace_provided_args_in_init():
-    HOLA = 'hola'
+class Service1:  # noqa: H601
+    pass
 
+
+class Service3:  # noqa: H601
+    pass
+
+
+class Service2:
+    @inject
+    def __init__(self, s3: Service3):
+        self._s3 = s3
+
+
+class Controller:
+    @inject
+    def __init__(self, s1: Service1, s2: Service2):
+        self._s1 = s1
+        self._s2 = s2
+
+
+def test_build_object_graph():
     contents = Contents()
-    contents.from_var_dict({
-        'param': HOLA
-    })
+    contents.add_factory('c', Controller)
+    contents.add_factory('s1', Service1)
+    contents.add_factory('s2', Service2)
+    contents.add_factory('s3', Service3)
     container(contents)
 
-    prova = Prova()
-    assert HOLA == prova.param
+    @inject
+    def app(c: Controller):
+        return c
+
+    assert app() != app()
