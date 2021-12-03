@@ -1,13 +1,14 @@
-from bite_di import container, inject
+from bite_di import container, Contents, inject
+from typing import Optional
 
 
 class Prova:  # noqa: H601
     @inject
-    def __init__(self, param: str):
+    def __init__(self, param: str = None):
         self.param = param
 
     @inject
-    def prova(self, param: str) -> str:
+    def prova(self, param: str = None) -> Optional[str]:
         return param
 
     @inject
@@ -18,9 +19,11 @@ class Prova:  # noqa: H601
 def test_replace_provided_args_in_method():
     HOLA = 'hola'
 
-    contents = {
+    contents = Contents()
+    contents.from_var_dict({
         'param': HOLA
-    }
+    })
+    print(contents)
     container(contents)
 
     prova = Prova()
@@ -31,9 +34,10 @@ def test_not_replace_provided_args_in_method():
     HOLA = 'hola'
     HELLO = 'hello'
 
-    contents = {
+    contents = Contents()
+    contents.from_var_dict({
         'param': HOLA
-    }
+    })
     container(contents)
 
     prova = Prova()
@@ -43,9 +47,10 @@ def test_not_replace_provided_args_in_method():
 def test_not_replace_self_in_method():
     HOLA = 'hola'
 
-    contents = {
+    contents = Contents()
+    contents.from_var_dict({
         'self': HOLA
-    }
+    })
     container(contents)
 
     prova = Prova()
@@ -55,9 +60,10 @@ def test_not_replace_self_in_method():
 def test_replace_provided_args_in_init():
     HOLA = 'hola'
 
-    contents = {
+    contents = Contents()
+    contents.from_var_dict({
         'param': HOLA
-    }
+    })
     container(contents)
 
     prova = Prova()
