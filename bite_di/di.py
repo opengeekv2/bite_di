@@ -1,7 +1,7 @@
 from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, DefaultDict
-from typing import Mapping, Tuple, cast, TypeVar, Any
+from typing import Tuple, cast, TypeVar, Any
 
 
 class Contents(DefaultDict[str, Callable[[], Any]]):  # noqa: H601
@@ -99,14 +99,11 @@ class Container:
         self.dump = dump
 
         def inject(func: F) -> F:
-            f = cast(
-                Callable[[List[object], Mapping['str', object]], object], func
-            )
-            decorated.append(f)
+            decorated.append(func)
 
             @wraps(func)
             def wrapper(*args: object, **kwargs: object) -> object:
-                fullargspec = getfullargspec(f)
+                fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
                     args, kwargs, fullargspec.args, contents)
                 if fullargspec.varargs is not None:
