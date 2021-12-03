@@ -37,7 +37,7 @@ def _replace_args_by_string(
 
 def _merge_varargs(
         args: Tuple[object, ...], varargs: str,
-        contents: Dict[str, Callable[[], Any]] = {}) -> Tuple[object, ...]:
+        contents: Dict[str, Callable[[], object]] = {}) -> Tuple[object, ...]:
     return args + cast(
         Tuple[object, ...],
         contents.get(varargs, _none_function)()
@@ -46,7 +46,7 @@ def _merge_varargs(
 
 def _replace_kwonlyargs(
         kwargs: Dict[str, object], kwonlyargs: List[str],
-        contents: Dict[str, Callable[[], Any]] = {}) -> Dict[str, object]:
+        contents: Dict[str, Callable[[], object]] = {}) -> Dict[str, object]:
     for kwonlyarg in kwonlyargs:
         if kwonlyarg not in kwargs.keys():
             parameter_to_inject = contents.get(kwonlyarg, _none_function)()
@@ -57,7 +57,7 @@ def _replace_kwonlyargs(
 
 def _merge_named_kwargs(
         kwargs: Dict[str, object], varkw: str,
-        contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
+        contents: Dict[str, Callable[[], object]]) -> Dict[str, object]:
     parameter_to_inject = contents.get(varkw, _none_function)()
     if parameter_to_inject is not None:
         kwargs.update(cast(Dict[str, object], parameter_to_inject).copy())
@@ -66,7 +66,7 @@ def _merge_named_kwargs(
 
 def _replace_kwargs(
         kwargs: Dict[str, object], kwonlyargs: List[str],
-        contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
+        contents: Dict[str, Callable[[], object]]) -> Dict[str, object]:
     for k, v in kwargs.items():
         if v is None and k not in kwonlyargs and contents.get(
                 k, _none_function)() is not None:
@@ -80,13 +80,13 @@ F = TypeVar('F', bound=Callable[..., object])
 class Container:
 
     def __init__(self) -> None:
-        self.decorated: List[Callable[..., Any]] = []
+        self.decorated: List[Callable[..., object]] = []
         self.dump: Callable[[], None] = lambda: print()
 
     def __call__(
-            self, new: Dict[str, Callable[[], Any]] = {},
-            contents: Dict[str, Callable[[], Any]] = {},
-            decorated: List[Callable[..., Any]] = []
+            self, new: Dict[str, Callable[[], object]] = {},
+            contents: Dict[str, Callable[[], object]] = {},
+            decorated: List[Callable[..., object]] = []
             ) -> Tuple[
                 Callable[[F], F],
                 Callable[[], None]]:
