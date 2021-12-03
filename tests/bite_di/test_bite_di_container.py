@@ -16,7 +16,7 @@ def test_container_not_recreated_after_create_container() -> None:
 def test_container_dump(capsys):
     container = create_container()
     contents = Contents()
-    contents['greeting'] = 'a'
+    contents['greeting'] = lambda: 'hola'
     container.dump()
     container(contents)
     container.dump()

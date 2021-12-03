@@ -1,12 +1,12 @@
-from inspect import getfullargspec
+from inspect import getfullargspec, ismethod
 from functools import wraps
+from types import FunctionType
 from typing import Callable, List, Dict, DefaultDict, Tuple, cast, TypeVar, Any, TypeAlias, ClassVar, Type
 
 
 class Contents(DefaultDict[str, Callable[[], Any]]):
     def from_var_dict(self, vardict: Dict[str, Any]) -> None:
-        c = Contents()
-        c.update(list(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
+        self.update(dict(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
 
     def add_var(self, key: str, var: Any) -> None:
         def wrapper():
@@ -19,12 +19,16 @@ class Contents(DefaultDict[str, Callable[[], Any]]):
 
 def _replace_args_by_string(
         args: Tuple[object, ...], kwargs: Dict[str, object],
-        argspec: List[str], contents: Dict[str, Callable[[], Any]] = {}) -> Tuple[object, ...]:
+        argspec: List[str], contents: Dict[str, Callable[[], Any]] = {},
+        is_method: bool = False) -> Tuple[object, ...]:
     arglist = list(args)
+    n_args = len(arglist)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
+            print(contents)
             parameter_to_inject = contents.get(arg, lambda: None)
-            if parameter_to_inject is not None and i >= len(arglist):
+            print(parameter_to_inject())
+            if parameter_to_inject() is not None and i >= n_args:
                 arglist.append(parameter_to_inject())
     return tuple(arglist)
 
@@ -86,7 +90,7 @@ class Container:
             contents.update(new)
 
         def dump() -> None:
-            print(contents)
+            print(dict(map(lambda item: (item[0], item[1]()), contents.items())))
 
         self.dump = dump
 
@@ -97,7 +101,7 @@ class Container:
             def wrapper(*args: object, **kwargs: object) -> object:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
-                    args, kwargs, fullargspec.args, contents)
+                    args, kwargs, fullargspec.args, contents, ismethod(func))
                 if fullargspec.varargs is not None:
                     args = _merge_varargs(args, fullargspec.varargs, contents)
                 if fullargspec.varkw is not None:
