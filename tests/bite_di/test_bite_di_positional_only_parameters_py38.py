@@ -1,9 +1,8 @@
-from bite_di import container, inject
+from bite_di import container, inject, Contents
 
 
-'''def test_all_types_of_params():
-
-    contents = {
+def test_all_types_of_params():
+    expected = {
         'posonly': 1,
         'pos': 2,
         'fulltuple': (1, 2),
@@ -12,6 +11,8 @@ from bite_di import container, inject
             'greeting': 'hola',
         }
     }
+    contents = Contents()
+    contents.from_var_dict(expected)
     container(contents)
 
     @inject
@@ -25,12 +26,12 @@ from bite_di import container, inject
         }
     result = difficult()
 
-    assert contents == result
+    assert expected == result
 
 
 def test_all_types_of_params_with_extras():
-
-    contents = {
+    contents = Contents()
+    contents.from_var_dict({
         'posonly': 1,
         'pos': 2,
         'fulltuple': (1, 2),
@@ -39,7 +40,7 @@ def test_all_types_of_params_with_extras():
             'greeting': 'hola',
         },
         'name': 'Michael Palin'
-    }
+    })
     container(contents)
 
     @inject
@@ -65,4 +66,4 @@ def test_all_types_of_params_with_extras():
         'name': 'Michael Palin'
     }
 
-    assert expected == result'''
+    assert expected == result

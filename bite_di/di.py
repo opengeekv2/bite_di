@@ -53,6 +53,7 @@ def _replace_kwonlyargs(
 def _merge_named_kwargs(
         kwargs: Dict[str, object], varkw: str,
         contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
+    
     parameter_to_inject = contents.get(varkw, lambda: None)()
     if parameter_to_inject is not None: 
         kwargs.update( cast( Dict[str, object], parameter_to_inject ).copy() )
@@ -65,7 +66,7 @@ def _replace_kwargs(
     for k, v in kwargs.items():
         if v is None and k not in kwonlyargs and contents.get(
                 k, lambda: None)() is not None:
-            kwargs[k] = contents[k]
+            kwargs[k] = contents[k]()
     return kwargs
 
 
