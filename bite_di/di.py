@@ -8,8 +8,8 @@ class Contents(DefaultDict[str, Callable[[], Any]]):  # noqa: H601
     def from_var_dict(self, vardict: Dict[str, Any]) -> None:
         self.update(dict(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
 
-    def add_var(self, key: str, var: Any) -> None:
-        def wrapper():
+    def add_var(self, key: str, var: object) -> None:
+        def wrapper() -> object:
             return var
         self[key] = wrapper
 
@@ -19,7 +19,7 @@ class Contents(DefaultDict[str, Callable[[], Any]]):  # noqa: H601
 
 def _replace_args_by_string(
         args: Tuple[object, ...], kwargs: Dict[str, object],
-        argspec: List[str], contents: Dict[str, Callable[[], Any]] = {}
+        argspec: List[str], contents: Dict[str, Callable[[], object]] = {}
         ) -> Tuple[object, ...]:
     arglist = list(args)
     n_args = len(arglist)
