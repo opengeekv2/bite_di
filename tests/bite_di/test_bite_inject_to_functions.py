@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Dict
 import pytest
 from bite_di import container, inject, Contents
 
@@ -25,8 +24,6 @@ falsy_values_except_none = [
 @pytest.mark.parametrize('param', falsy_values_except_none)
 def test_replaces_function_args_for_container_falsy_values_except_none(
         param) -> None:
-
-
     contents = Contents()
     contents.from_var_dict({
         'param': param
