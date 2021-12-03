@@ -1,10 +1,9 @@
 from inspect import getfullargspec, ismethod
 from functools import wraps
-from types import FunctionType
-from typing import Callable, List, Dict, DefaultDict, Tuple, cast, TypeVar, Any, TypeAlias, ClassVar, Type
+from typing import Callable, List, Dict, DefaultDict, Tuple, cast, TypeVar, Any
 
 
-class Contents(DefaultDict[str, Callable[[], Any]]):
+class Contents(DefaultDict[str, Callable[[], Any]]):  # noqa: H601
     def from_var_dict(self, vardict: Dict[str, Any]) -> None:
         self.update(dict(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
 
@@ -19,8 +18,8 @@ class Contents(DefaultDict[str, Callable[[], Any]]):
 
 def _replace_args_by_string(
         args: Tuple[object, ...], kwargs: Dict[str, object],
-        argspec: List[str], contents: Dict[str, Callable[[], Any]] = {},
-        is_method: bool = False) -> Tuple[object, ...]:
+        argspec: List[str], contents: Dict[str, Callable[[], Any]] = {}
+        ) -> Tuple[object, ...]:
     arglist = list(args)
     n_args = len(arglist)
     for i, arg in enumerate(argspec):
@@ -36,7 +35,10 @@ def _replace_args_by_string(
 def _merge_varargs(
         args: Tuple[object, ...], varargs: str,
         contents: Dict[str, Callable[[], Any]] = {}) -> Tuple[object, ...]:
-    return args + cast(Tuple[object, ...], contents.get(varargs, lambda: None)())
+    return args + cast(
+        Tuple[object, ...],
+        contents.get(varargs, lambda: None)()
+    )
 
 
 def _replace_kwonlyargs(
@@ -53,10 +55,9 @@ def _replace_kwonlyargs(
 def _merge_named_kwargs(
         kwargs: Dict[str, object], varkw: str,
         contents: Dict[str, Callable[[], Any]]) -> Dict[str, object]:
-    
     parameter_to_inject = contents.get(varkw, lambda: None)()
-    if parameter_to_inject is not None: 
-        kwargs.update( cast( Dict[str, object], parameter_to_inject ).copy() )
+    if parameter_to_inject is not None:
+        kwargs.update(cast(Dict[str, object], parameter_to_inject).copy())
     return kwargs
 
 
@@ -91,7 +92,10 @@ class Container:
             contents.update(new)
 
         def dump() -> None:
-            print(dict(map(lambda item: (item[0], item[1]()), contents.items())))
+            print(dict(map(
+                lambda item: (item[0], item[1]()),
+                contents.items()
+            )))
 
         self.dump = dump
 
@@ -102,7 +106,7 @@ class Container:
             def wrapper(*args: object, **kwargs: object) -> object:
                 fullargspec = getfullargspec(func)
                 args = _replace_args_by_string(
-                    args, kwargs, fullargspec.args, contents, ismethod(func))
+                    args, kwargs, fullargspec.args, contents)
                 if fullargspec.varargs is not None:
                     args = _merge_varargs(args, fullargspec.varargs, contents)
                 if fullargspec.varkw is not None:

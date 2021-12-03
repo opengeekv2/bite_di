@@ -1,5 +1,4 @@
-from .di import create_container, Contents
-
+from .di import create_container, Contents  # noqa: F401
 
 if 'container' not in locals().keys():
     container = create_container()
