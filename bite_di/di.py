@@ -24,9 +24,7 @@ def _replace_args_by_string(
     n_args = len(arglist)
     for i, arg in enumerate(argspec):
         if arg not in kwargs.keys():
-            print(contents)
             parameter_to_inject = contents.get(arg, lambda: None)
-            print(parameter_to_inject())
             if parameter_to_inject() is not None and i >= n_args:
                 arglist.append(parameter_to_inject())
     return tuple(arglist)
