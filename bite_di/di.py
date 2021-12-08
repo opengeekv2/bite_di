@@ -1,6 +1,6 @@
 from inspect import getfullargspec
 from functools import wraps
-from typing import Callable, List, Dict, DefaultDict
+from typing import Callable, List, Dict, DefaultDict, Mapping
 from typing import Tuple, cast, TypeVar
 
 
@@ -9,7 +9,7 @@ def _none_function() -> None:
 
 
 class Contents(DefaultDict[str, Callable[[], object]]):  # noqa: H601
-    def from_var_dict(self, vardict: Dict[str, object]) -> None:
+    def from_var_dict(self, vardict: Mapping[str, object]) -> None:
         self.update(dict(map(lambda x: (x[0], lambda: x[1]), vardict.items())))
 
     def add_var(self, key: str, var: object) -> None:
