@@ -43,6 +43,8 @@ Key features:
 - [x] inject name-matching keyword only arguments 
 - [x] inject name-matching keyword arguments passed as None
 - [x] Basic container dump 
+- [x] Injects async functions
+- [x] Injects to async functions
 
 Using the public container
 -----------------------------

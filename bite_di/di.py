@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, DefaultDict, Mapping
@@ -77,54 +78,68 @@ def _replace_kwargs(
 F = TypeVar('F', bound=Callable[..., object])
 
 
-class Container:
-
-    def __init__(self) -> None:
-        self.decorated: List[Callable[..., object]] = []
-        self.dump: Callable[[], None] = lambda: print()
-
+class Container(ABC):  # noqa: H601
+    @abstractmethod
     def __call__(
-            self, new: Dict[str, Callable[[], object]] = {},
-            contents: Dict[str, Callable[[], object]] = {},
-            decorated: List[Callable[..., object]] = []
-            ) -> Tuple[
-                Callable[[F], F],
-                Callable[[], None]]:
-
-        if new:
-            contents.update(new)
-
-        def dump() -> None:
-            print(dict(map(
-                lambda item: (item[0], item[1]()),
-                contents.items()
-            )))
-
-        self.dump = dump
-
-        def inject(func: F) -> F:
-            decorated.append(func)
-
-            @wraps(func)
-            def wrapper(*args: object, **kwargs: object) -> object:
-                fullargspec = getfullargspec(func)
-                args = _replace_args_by_string(
-                    args, kwargs, fullargspec.args, contents)
-                if fullargspec.varargs is not None:
-                    args = _merge_varargs(args, fullargspec.varargs, contents)
-                if fullargspec.varkw is not None:
-                    kwargs = _merge_named_kwargs(
-                        kwargs, fullargspec.varkw, contents)
-                kwargs = _replace_kwonlyargs(
-                    kwargs, fullargspec.kwonlyargs, contents)
-                kwargs = _replace_kwargs(
-                    kwargs, fullargspec.kwonlyargs, contents)
-
-                return func(*args, **kwargs)
-
-            return cast('F', wrapper)
-        return inject, dump
+                self, new: Dict[str, Callable[[], object]] = {},
+                contents: Dict[str, Callable[[], object]] = {},
+                decorated: List[Callable[..., object]] = []
+                ) -> Tuple[
+                    Callable[[F], F],
+                    Callable[[], None]]:
+        raise NotImplementedError()  # pragma: nocover
 
 
 def create_container() -> Container:
-    return Container()
+
+    class ContainerContainer(Container):  # noqa: H601
+
+        def __init__(self) -> None:
+            self.decorated: List[Callable[..., object]] = []
+            self.dump: Callable[[], None] = lambda: print()
+
+        def __call__(
+                self, new: Dict[str, Callable[[], object]] = {},
+                contents: Dict[str, Callable[[], object]] = {},
+                decorated: List[Callable[..., object]] = []
+                ) -> Tuple[
+                    Callable[[F], F],
+                    Callable[[], None]]:
+
+            if new:
+                contents.update(new)
+
+            def dump() -> None:
+                print(dict(map(
+                    lambda item: (item[0], item[1]()),
+                    contents.items()
+                )))
+
+            self.dump = dump
+
+            def inject(func: F) -> F:
+                decorated.append(func)
+
+                @wraps(func)
+                def wrapper(*args: object, **kwargs: object) -> object:
+                    fullargspec = getfullargspec(func)
+                    args = _replace_args_by_string(
+                        args, kwargs, fullargspec.args, contents)
+                    if fullargspec.varargs is not None:
+                        args = _merge_varargs(
+                            args, fullargspec.varargs, contents
+                        )
+                    if fullargspec.varkw is not None:
+                        kwargs = _merge_named_kwargs(
+                            kwargs, fullargspec.varkw, contents)
+                    kwargs = _replace_kwonlyargs(
+                        kwargs, fullargspec.kwonlyargs, contents)
+                    kwargs = _replace_kwargs(
+                        kwargs, fullargspec.kwonlyargs, contents)
+
+                    return func(*args, **kwargs)
+
+                return cast('F', wrapper)
+            return inject, dump
+
+    return ContainerContainer()

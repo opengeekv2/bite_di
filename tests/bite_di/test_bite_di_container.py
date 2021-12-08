@@ -17,8 +17,7 @@ def test_container_dump(capsys):
     container = create_container()
     contents = Contents()
     contents['greeting'] = lambda: 'hola'
-    container.dump()
     container(contents)
     container.dump()
     captured = capsys.readouterr()
-    assert captured.out == "\n{'greeting': 'hola'}\n"
+    assert captured.out == "{'greeting': 'hola'}\n"
