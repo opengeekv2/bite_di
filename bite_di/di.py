@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, DefaultDict, Mapping
@@ -79,6 +79,7 @@ F = TypeVar('F', bound=Callable[..., object])
 
 
 class Container(ABC):  # noqa: H601
+    @abstractmethod
     def __call__(
                 self, new: Dict[str, Callable[[], object]] = {},
                 contents: Dict[str, Callable[[], object]] = {},
@@ -86,7 +87,7 @@ class Container(ABC):  # noqa: H601
                 ) -> Tuple[
                     Callable[[F], F],
                     Callable[[], None]]:
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: nocover
 
 
 def create_container() -> Container:
