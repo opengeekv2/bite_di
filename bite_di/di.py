@@ -78,7 +78,7 @@ def _replace_kwargs(
 F = TypeVar('F', bound=Callable[..., object])
 
 
-class Container(ABC):
+class Container(ABC):  # noqa: H601
     def __call__(
                 self, new: Dict[str, Callable[[], object]] = {},
                 contents: Dict[str, Callable[[], object]] = {},
@@ -90,8 +90,8 @@ class Container(ABC):
 
 
 def create_container() -> Container:
-    
-    class ContainerContainer(Container):
+
+    class ContainerContainer(Container):  # noqa: H601
 
         def __init__(self) -> None:
             self.decorated: List[Callable[..., object]] = []
@@ -125,7 +125,9 @@ def create_container() -> Container:
                     args = _replace_args_by_string(
                         args, kwargs, fullargspec.args, contents)
                     if fullargspec.varargs is not None:
-                        args = _merge_varargs(args, fullargspec.varargs, contents)
+                        args = _merge_varargs(
+                            args, fullargspec.varargs, contents
+                        )
                     if fullargspec.varkw is not None:
                         kwargs = _merge_named_kwargs(
                             kwargs, fullargspec.varkw, contents)

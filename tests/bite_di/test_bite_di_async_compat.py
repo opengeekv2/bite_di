@@ -21,6 +21,7 @@ def test_injects_to_async_function():
     result = asyncio.run(hola())
     assert 'hola' == result
 
+
 def test_injects_async_function_to_async_function():
     container = create_container()
     contents = Contents()
