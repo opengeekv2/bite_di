@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-from inspect import getfullargspec
+from abc import ABC, abstractmethod, abstractproperty
+from inspect import GEN_CREATED, getfullargspec
 from functools import wraps
-from typing import Callable, List, Dict, DefaultDict, Mapping
+from typing import Callable, List, Dict, DefaultDict, Mapping, Any
 from typing import Tuple, cast, TypeVar
 
 
@@ -79,6 +79,8 @@ F = TypeVar('F', bound=Callable[..., object])
 
 
 class Container(ABC):  # noqa: H601
+    decorated: List[Callable[..., object]]
+
     @abstractmethod
     def __call__(
                 self, new: Dict[str, Callable[[], object]] = {},
@@ -97,6 +99,8 @@ def create_container() -> Container:
         def __init__(self) -> None:
             self.decorated: List[Callable[..., object]] = []
             self.dump: Callable[[], None] = lambda: print()
+            self.get: Callable[[str], Any] = lambda a: None 
+
 
         def __call__(
                 self, new: Dict[str, Callable[[], object]] = {},
@@ -116,6 +120,11 @@ def create_container() -> Container:
                 )))
 
             self.dump = dump
+
+            def get(key: str) -> Any:
+                return contents.get(key, _none_function)()
+
+            self.get = get
 
             def inject(func: F) -> F:
                 decorated.append(func)
