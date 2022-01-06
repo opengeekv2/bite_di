@@ -1,17 +1,16 @@
 from typing import Optional, Callable, Awaitable
-from bite_di import create_container, Contents
+from bite_di import Container
 import asyncio
 
 
 def test_injects_to_async_function():
-    container = create_container()
-    contents = Contents()
+    container = Container()
 
-    contents.from_var_dict({
+    contents = {
         'a': 'hola'
-    })
+    }
 
-    inject, dump = container(contents)
+    inject = container(contents)
 
     @inject
     async def hola(a: Optional[str] = None):
@@ -23,17 +22,16 @@ def test_injects_to_async_function():
 
 
 def test_injects_async_function_to_async_function():
-    container = create_container()
-    contents = Contents()
+    container = Container()
 
     async def return_hola() -> str:
         return await asyncio.sleep(1, 'hola')
 
-    contents.from_var_dict({
+    contents = {
         'a': return_hola
-    })
+    }
 
-    inject, dump = container(contents)
+    inject = container(contents)
 
     @inject
     async def hola(a: Callable[[], Awaitable[str]] = None):

@@ -1,4 +1,4 @@
-from bite_di import container, inject, Contents
+from bite_di import container, inject
 
 
 def test_all_types_of_params():
@@ -11,9 +11,7 @@ def test_all_types_of_params():
             'greeting': 'hola',
         }
     }
-    contents = Contents()
-    contents.from_var_dict(expected)
-    container(contents)
+    container(expected)
 
     @inject
     def difficult(posonly, /, pos, *fulltuple, kwonly=None, **fulldict):
@@ -30,8 +28,7 @@ def test_all_types_of_params():
 
 
 def test_all_types_of_params_with_extras():
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'posonly': 1,
         'pos': 2,
         'fulltuple': (1, 2),
@@ -40,7 +37,7 @@ def test_all_types_of_params_with_extras():
             'greeting': 'hola',
         },
         'name': 'Michael Palin'
-    })
+    }
     container(contents)
 
     @inject

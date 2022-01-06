@@ -1,4 +1,4 @@
-from bite_di import container, Contents, inject
+from bite_di import container, inject
 from typing import Optional
 
 
@@ -19,10 +19,9 @@ class Prova:  # noqa: H601
 def test_replace_provided_args_in_method():
     HOLA = 'hola'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'param': HOLA
-    })
+    }
     print(contents)
     container(contents)
 
@@ -34,10 +33,9 @@ def test_not_replace_provided_args_in_method():
     HOLA = 'hola'
     HELLO = 'hello'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'param': HOLA
-    })
+    }
     container(contents)
 
     prova = Prova()
@@ -47,10 +45,9 @@ def test_not_replace_provided_args_in_method():
 def test_not_replace_self_in_method():
     HOLA = 'hola'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'self': HOLA
-    })
+    }
     container(contents)
 
     prova = Prova()
@@ -79,12 +76,10 @@ class Controller:
 
 
 def test_build_object_graph():
-    contents = Contents()
-    contents.add_factory('c', Controller)
-    contents.add_factory('s1', Service1)
-    contents.add_factory('s2', Service2)
-    contents.add_factory('s3', Service3)
-    container(contents)
+    container.add_factory('c', Controller)
+    container.add_factory('s1', Service1)
+    container.add_factory('s2', Service2)
+    container.add_factory('s3', Service3)
 
     @inject
     def app(c: Controller):

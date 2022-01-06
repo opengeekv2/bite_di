@@ -1,5 +1,5 @@
-from .di import create_container, Contents  # noqa: F401
+from .di import Container
 
 if 'container' not in locals().keys():
-    container = create_container()
-inject, dump = container()
+    container = Container()
+inject = container()

@@ -1,13 +1,11 @@
 from __future__ import annotations
 import pytest
-from bite_di import container, inject, Contents
+from bite_di import container, inject
 
 
 def test_replaces_function_args_for_container_string_keys_value() -> None:
     HOLA = 'hola'
-    contents = Contents()
-    contents.add_var('greeting', HOLA)
-    container(contents)
+    container.add_var('greeting', HOLA)
 
     @inject
     def greet(greeting: str = None):
@@ -24,10 +22,9 @@ falsy_values_except_none = [
 @pytest.mark.parametrize('param', falsy_values_except_none)
 def test_replaces_function_args_for_container_falsy_values_except_none(
         param) -> None:
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'param': param
-    })
+    }
 
     container(contents)
 
@@ -39,10 +36,9 @@ def test_replaces_function_args_for_container_falsy_values_except_none(
 
 
 def test_does_not_replace_none_container_values() -> None:
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'param': None
-    })
+    }
 
     container(contents)
 
@@ -58,11 +54,10 @@ def test_not_replaces_function_args_when_passed() -> None:
     HOLA = 'hola'
     HELLO = 'hello'
     NAME = 'John Cleese'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -75,10 +70,9 @@ def test_not_replaces_function_args_when_passed() -> None:
 def test_injects_varargs_by_key() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'fullgreeting': (HOLA, NAME)
-    })
+    }
     container(contents)
 
     @inject
@@ -92,10 +86,9 @@ def test_injects_varargs_by_key() -> None:
 def test_injects_varargs_by_key_but_are_merged_to_passed() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'fullgreeting': tuple([NAME])
-    })
+    }
     container(contents)
 
     @inject
@@ -111,11 +104,10 @@ def test_replaces_function_with_default_args() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -128,11 +120,10 @@ def test_replaces_function_with_default_args() -> None:
 def test_replaces_none_kwargs_with_ones_in_container() -> None:
     HOLA = 'hola'
     NAME = 'John Cleese'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -149,11 +140,10 @@ def test_not_replaces_provided_kwargs_with_ones_in_container() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -172,11 +162,10 @@ def test_respects_passed_posiotional_or_keyword_args():
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -190,11 +179,10 @@ def test_replaces_kwonly_args():
     HOLA = 'hola'
     NAME = 'John Cleese'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME
-    })
+    }
     container(contents)
 
     @inject
@@ -208,13 +196,12 @@ def test_replaces_named_kwargs_args():
     HOLA = 'hola'
     NAME = 'John Cleese'
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'fullgreeting': {
             'greeting': HOLA,
             'name': NAME
         }
-    })
+    }
     container(contents)
 
     @inject
@@ -228,10 +215,9 @@ def test_replaces_named_kwargs_args():
 def test_replaces_function_kwargs_for_container_falsy_values_except_none(
         param) -> None:
 
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'key': param
-    })
+    }
 
     container(contents)
 
@@ -247,11 +233,10 @@ def test_replaces_args_and_kwargs() -> None:
     HELLO = 'hello'
     NAME = 'John Cleese'
     OTHER_NAME = 'Eric Idle'
-    contents = Contents()
-    contents.from_var_dict({
+    contents = {
         'greeting': HOLA,
         'name': NAME,
-    })
+    }
     container(contents)
 
     @inject
