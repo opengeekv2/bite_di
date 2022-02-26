@@ -1,5 +1,6 @@
 from sys import argv
 from inspect import signature, Parameter
+from typing import Any, Callable
 from bite_di import container
 import typeguard
 import importlib
@@ -11,7 +12,7 @@ class Result:
         self.success = True
         self.messages = []
 
-def _check_function(result, fun):
+def _check_function(result: Result, fun: Callable[..., Any]):
     sig = signature(fun)
     result.messages.append('def ' + fun.__qualname__ + str(sig))
     
