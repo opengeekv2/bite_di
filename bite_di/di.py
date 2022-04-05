@@ -2,6 +2,7 @@ from inspect import getfullargspec
 from functools import wraps
 from typing import Callable, List, Dict, Mapping, Any, MutableMapping
 from typing import Tuple, cast, TypeVar
+import typing
 
 
 def _none_function() -> None:
@@ -76,10 +77,10 @@ class Container:  # noqa: H601
         self.decorated: List[Callable[..., object]] = []
 
     def __call__(
-            self, new: Mapping[str, object] = {},
+            self, new: typing.Optional[Mapping[str, object] | Callable] = None,
             ) -> Callable[[F], F]:
 
-        if new:
+        if new and isinstance(new, Dict):
             self.__from_var_dict(new)
 
         def inject(func: F) -> F:
@@ -105,6 +106,13 @@ class Container:  # noqa: H601
                 return func(*args, **kwargs)
 
             return cast('F', wrapper)
+
+        def add_dependency(key: str, factory: Callable):
+            self.add_factory(key, factory)
+
+        if new and callable(new):
+            new(add_dependency)
+
         return inject
 
     def dump(self) -> None:
